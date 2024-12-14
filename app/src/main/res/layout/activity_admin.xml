@@ -26,5 +26,29 @@
         android:layout_height="wrap_content"
         android:text="Create Poll"
         android:layout_marginTop="16dp" />
+    <Button
+        android:id="@+id/goToMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout" />
+
+    <EditText
+        android:id="@+id/pollIdInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Poll ID" />
+
+    <Button
+        android:id="@+id/viewVotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Votes" />
+
+    <ListView
+        android:id="@+id/voteList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
 
 </LinearLayout>

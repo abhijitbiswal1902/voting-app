@@ -41,13 +41,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM Users WHERE username = ? AND password = ?", new String[]{username, password});
     }
 
-    public boolean createPoll(String name, String candidates) {
+    public long createPoll(String name, String candidates) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", name);
         values.put("candidates", candidates);
-        long result = db.insert("Polls", null, values);
-        return result != -1;
+        return  db.insert("Polls", null, values);
     }
 
     public Cursor getPoll(String id) {
@@ -57,11 +56,35 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean castVote(int pollId, int userId, String candidate) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // Check if the user has already voted in the poll
+        String query = "SELECT * FROM Votes WHERE pollId = ? AND userId = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(pollId), String.valueOf(userId)});
+
+        if (cursor.getCount() > 0) {
+            // User has already voted
+            cursor.close();
+            return false;
+        }
+
+        cursor.close();
+
+        // If no existing vote is found, allow the user to cast a vote
         ContentValues values = new ContentValues();
         values.put("pollId", pollId);
         values.put("userId", userId);
         values.put("candidate", candidate);
         long result = db.insert("Votes", null, values);
+
         return result != -1;
     }
+
+    public Cursor getVoteCounts(String pollId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT candidate, COUNT(*) as voteCount FROM Votes WHERE pollId = ? GROUP BY candidate";
+        return db.rawQuery(query, new String[]{pollId});
+    }
+
+
 }

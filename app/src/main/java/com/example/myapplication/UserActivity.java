@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -12,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class UserActivity extends AppCompatActivity {
     EditText pollId;
-    Button searchPoll, castVote;
+    Button searchPoll, castVote, logout; // Reference the new logout button
     ListView candidateList;
     DBHelper dbHelper;
     int userId;
@@ -26,6 +27,7 @@ public class UserActivity extends AppCompatActivity {
         pollId = findViewById(R.id.pollId);
         searchPoll = findViewById(R.id.searchPoll);
         castVote = findViewById(R.id.castVote);
+        logout = findViewById(R.id.logout); // Initialize logout button
         candidateList = findViewById(R.id.candidateList);
 
         dbHelper = new DBHelper(this);
@@ -53,11 +55,20 @@ public class UserActivity extends AppCompatActivity {
                 if (dbHelper.castVote(Integer.parseInt(id), userId, selectedCandidate)) {
                     Toast.makeText(this, "Vote cast successfully!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, "Error casting vote!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "You have already casted vote!", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(this, "Please select a candidate!", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        logout.setOnClickListener(v -> {
+            // Log out the user and navigate to the main or login activity
+            Intent intent = new Intent(UserActivity.this, MainActivity.class); // Redirect to main/login activity
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Clear back stack
+            startActivity(intent);
+            finish(); // End current activity
+            Toast.makeText(this, "Logged out successfully!", Toast.LENGTH_SHORT).show();
         });
     }
 }
